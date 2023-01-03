@@ -13,6 +13,19 @@ Install with:
 pip install mdformat-pyproject
 ```
 
+## Usage
+
+After installing this plugin, the [mdformat configuration][mdformat-configuration] can be added in
+a new `[tool.mdformat]` section inside the `pyproject.toml` file.
+
+```toml
+[tool.mdformat]
+wrap = "keep"       # possible values: {"keep", "no", INTEGER}
+number = false      # possible values: {false, true}
+end_of_line = "lf"  # possible values: {"lf", "crlf", "keep"}
+...                 # Any mdformat plugin options can be added here too
+```
+
 ## Usage as a [pre-commit] hook
 
 Add the following to your `.pre-commit-config.yaml`:
@@ -25,12 +38,6 @@ Add the following to your `.pre-commit-config.yaml`:
       additional_dependencies:
         - mdformat-pyproject
 ```
-
-## Usage
-
-After installing this plugin, the
-[mdformat configuration][mdformat-configuration] can be added in a new
-`[tool.mdformat]` section inside the `pyproject.toml` file.
 
 [ci-badge]: https://github.com/csala/mdformat-pyproject/workflows/CI/badge.svg?branch=master
 [ci-link]: https://github.com/csala/mdformat/actions?query=workflow%3ACI+branch%3Amaster+event%3Apush

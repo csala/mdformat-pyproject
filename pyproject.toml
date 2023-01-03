@@ -41,15 +41,19 @@ include = []
 exclude = [".github/", "tests/"]
 
 [tool.isort]
-# Group first party and local folder imports together
-# no_lines_before = ["LOCALFOLDER"]
-
-# Configure isort to work without access to site-packages
-# known_first_party = ["mdformat_pyproject", "tests"]
-
-# Settings for Black compatibility
 profile = "black"
 
 [tool.mdformat]
 wrap = 99
 number = true
+
+[tool.coverage.report]
+exclude_lines = [
+    '^ *import '
+]
+
+[tool.black]
+line_length = 99
+
+[tool.flake8]
+max-line-length = 99

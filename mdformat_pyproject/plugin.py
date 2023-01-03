@@ -5,8 +5,8 @@ import pathlib
 import sys
 from typing import Mapping, NoReturn, Optional
 
+import markdown_it
 import mdformat
-from markdown_it import MarkdownIt
 from mdformat.renderer.typing import Render
 
 if sys.version_info >= (3, 11):
@@ -17,6 +17,14 @@ else:
 
 @functools.lru_cache()
 def _find_pyproject_toml_path(search_path: str) -> Optional[pathlib.Path]:
+    """Find the pyproject.toml file that corresponds to the search path.
+
+    The search is done ascending through the folders tree until a pyproject.toml
+    file is found in the same folder. If the root '/' is reached, None is returned.
+
+    The special path "-" used for stdin inputs is replaced with the current working
+    directory.
+    """
     if search_path == "-":
         search_path = pathlib.Path.cwd()
     else:
@@ -32,7 +40,11 @@ def _find_pyproject_toml_path(search_path: str) -> Optional[pathlib.Path]:
 
 @functools.lru_cache()
 def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[Mapping]:
-    """Parse the pyproject.toml file."""
+    """Extract and validate the mdformat options from the pyproject.toml file.
+
+    The options are searched inside a [tool.mdformat] key within the toml file,
+    and they are validated using the default functions from `mdformat._conf`.
+    """
     content = tomllib.loads(pyproject_path.read_text())
     options = content.get("tool", {}).get("mdformat")
     if options is not None:
@@ -43,35 +55,38 @@ def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[Mapping]:
 
 @functools.lru_cache()
 def _reload_cli_opts() -> Mapping:
+    """Re-parse the sys.argv array to deduce which arguments were used in the CLI.
+
+    If unknown arguments are found, we deduce that mdformat is being called as a
+    python library and therefore no mdofrmat command line arguments were passed.
+
+    Notice that the strategy above does not fully close the door to situations
+    with colliding arguments with different meanings, but the rarity of the
+    situation and the complexity of a possible solution makes the risk worth taking.
+    """
     import mdformat._cli
 
     enabled_parserplugins = mdformat.plugins.PARSER_EXTENSIONS
     enabled_codeformatters = mdformat.plugins.CODEFORMATTERS
-    arg_parser = mdformat._cli.make_arg_parser(
-        enabled_parserplugins, enabled_codeformatters
-    )
-    return {
-        key: value
-        for key, value in vars(arg_parser.parse_args()).items()
-        if value is not None
-    }
+    arg_parser = mdformat._cli.make_arg_parser(enabled_parserplugins, enabled_codeformatters)
+    args, unknown = arg_parser.parse_known_args(sys.argv[1:])
+    if unknown:
+        return {}
+
+    return {key: value for key, value in vars(args).items() if value is not None}
 
 
-def update_mdit(mdit: MarkdownIt) -> NoReturn:
-    """Read the pyproject.toml file and update the mdformat options."""
+def update_mdit(mdit: markdown_it.MarkdownIt) -> NoReturn:
+    """Read the pyproject.toml file and re-create the mdformat options."""
     mdformat_options = mdit.options["mdformat"]
     file_path = mdformat_options.get("filename", "-")
     pyproject_path = _find_pyproject_toml_path(file_path)
-    cli_opts = _reload_cli_opts()
     if pyproject_path:
         pyproject_opts = _parse_pyproject(pyproject_path)
         if pyproject_opts is not None:
-            options: Mapping = {
-                **mdformat._conf.DEFAULT_OPTS,
-                **pyproject_opts,
-                **cli_opts,
-            }
-            mdformat_options.update(options)
+            cli_opts = _reload_cli_opts()
+            new_options: Mapping = {**pyproject_opts, **cli_opts}
+            mdformat_options.update(new_options)
 
 
 RENDERERS: Mapping[str, Render] = {}
