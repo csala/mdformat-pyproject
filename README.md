@@ -23,7 +23,6 @@ a new `[tool.mdformat]` section inside the `pyproject.toml` file.
 wrap = "keep"       # possible values: {"keep", "no", INTEGER}
 number = false      # possible values: {false, true}
 end_of_line = "lf"  # possible values: {"lf", "crlf", "keep"}
-...                 # Any mdformat plugin options can be added here too
 ```
 
 ## Usage as a [pre-commit] hook
