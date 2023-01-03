@@ -1,44 +1,30 @@
 Three `-` break. Untouched
 .
----
-.
----
-.
+# Test file
 
-Three `_` break. Change to `---`
-.
-___
-.
----
-.
+This repository contains 2 separate configuration files with contradictory settings:
 
+1. The `.mdformat.toml`, which should be used by default by `mdformat`, and which defines a `wrap`
+   length of 80 and sets `number` to `false`, meaning that numbered lists would be written starting
+   with `1.` on all the rows.
+2. The `pyproject.toml`, which should be used after the `mdformat-pyproject` plugin is installed,
+   and which defines wrap length of 99 and sets `number` to `true`, meaning that numbered lists
+   would be written starting with consecutive numbers.
 
-Three `*` break. Change to `---`
+This file is written according to the rules specified in the `pyproject.toml` file and serves as a
+valid test to see if the plugin is working as expected.
 .
-***
-.
----
-.
+# Test file
 
+This repository contains 2 separate configuration files with contradictory settings:
 
-70 `_` break. Change to `---`
-.
-______________________________________________________________________
-.
----
-.
+1. The `.mdformat.toml`, which should be used by default by `mdformat`, and which defines a `wrap`
+   length of 80 and sets `number` to `false`, meaning that numbered lists would be written starting
+   with `1.` on all the rows.
+2. The `pyproject.toml`, which should be used after the `mdformat-pyproject` plugin is installed,
+   and which defines wrap length of 99 and sets `number` to `true`, meaning that numbered lists
+   would be written starting with consecutive numbers.
 
-
-Three `-` break followed by some text. Should be sepatared.
-.
-Some text above
-
----
-Some text below
-.
-Some text above
-
----
-
-Some text below
+This file is written according to the rules specified in the `pyproject.toml` file and serves as a
+valid test to see if the plugin is working as expected.
 .

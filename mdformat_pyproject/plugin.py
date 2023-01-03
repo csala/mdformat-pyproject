@@ -5,8 +5,8 @@ import pathlib
 import sys
 from typing import Mapping, NoReturn, Optional
 
-from markdown_it import MarkdownIt
 import mdformat
+from markdown_it import MarkdownIt
 from mdformat.renderer.typing import Render
 
 if sys.version_info >= (3, 11):
@@ -43,6 +43,8 @@ def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[Mapping]:
 
 @functools.lru_cache()
 def _reload_cli_opts() -> Mapping:
+    import mdformat._cli
+
     enabled_parserplugins = mdformat.plugins.PARSER_EXTENSIONS
     enabled_codeformatters = mdformat.plugins.CODEFORMATTERS
     arg_parser = mdformat._cli.make_arg_parser(
@@ -58,7 +60,7 @@ def _reload_cli_opts() -> Mapping:
 def update_mdit(mdit: MarkdownIt) -> NoReturn:
     """Read the pyproject.toml file and update the mdformat options."""
     mdformat_options = mdit.options["mdformat"]
-    file_path = mdformat_options["filename"]
+    file_path = mdformat_options.get("filename", "-")
     pyproject_path = _find_pyproject_toml_path(file_path)
     cli_opts = _reload_cli_opts()
     if pyproject_path:
