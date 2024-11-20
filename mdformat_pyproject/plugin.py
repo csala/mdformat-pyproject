@@ -57,8 +57,8 @@ def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[Mapping]:
 def _reload_cli_opts() -> Mapping:
     """Re-parse the sys.argv array to deduce which arguments were used in the CLI.
 
-    If unknown arguments are found, we deduce that mdformat is being called as a
-    python library and therefore no mdofrmat command line arguments were passed.
+    If unknown arguments are found, we deduce that mdformat is being used as a
+    python library and therefore no mdformat command line arguments were passed.
 
     Notice that the strategy above does not fully close the door to situations
     with colliding arguments with different meanings, but the rarity of the
@@ -66,9 +66,20 @@ def _reload_cli_opts() -> Mapping:
     """
     import mdformat._cli
 
-    enabled_parserplugins = mdformat.plugins.PARSER_EXTENSIONS
-    enabled_codeformatters = mdformat.plugins.CODEFORMATTERS
-    arg_parser = mdformat._cli.make_arg_parser(enabled_parserplugins, enabled_codeformatters)
+    if hasattr(mdformat.plugins, "_PARSER_EXTENSION_DISTS"):
+        # New API, mdformat>=0.7.19
+        arg_parser = mdformat._cli.make_arg_parser(
+            mdformat.plugins._PARSER_EXTENSION_DISTS,
+            mdformat.plugins._CODEFORMATTER_DISTS,
+            mdformat.plugins.PARSER_EXTENSIONS,
+        )
+    else:
+        # Backwards compatibility, mdformat<0.7.19
+        arg_parser = mdformat._cli.make_arg_parser(
+            mdformat.plugins.PARSER_EXTENSIONS,
+            mdformat.plugins.CODEFORMATTERS,
+        )
+
     args, unknown = arg_parser.parse_known_args(sys.argv[1:])
     if unknown:
         return {}
