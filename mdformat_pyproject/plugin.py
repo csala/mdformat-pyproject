@@ -3,7 +3,7 @@
 import functools
 import pathlib
 import sys
-from typing import Mapping, NoReturn, Optional
+from typing import MutableMapping, Optional, Sequence
 
 import markdown_it
 import mdformat
@@ -13,6 +13,9 @@ if sys.version_info >= (3, 11):
     import tomllib
 else:
     import tomli as tomllib
+
+
+_ConfigOptions = MutableMapping[str, int | str | Sequence[str]]
 
 
 @functools.lru_cache()
@@ -39,7 +42,7 @@ def _find_pyproject_toml_path(search_path: str) -> Optional[pathlib.Path]:
 
 
 @functools.lru_cache()
-def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[Mapping]:
+def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[_ConfigOptions]:
     """Extract and validate the mdformat options from the pyproject.toml file.
 
     The options are searched inside a [tool.mdformat] key within the toml file,
@@ -50,11 +53,11 @@ def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[Mapping]:
     if options is not None:
         mdformat._conf._validate_keys(options, pyproject_path)
         mdformat._conf._validate_values(options, pyproject_path)
-        return options
+    return options
 
 
 @functools.lru_cache()
-def _reload_cli_opts() -> Mapping:
+def _reload_cli_opts() -> _ConfigOptions:
     """Re-parse the sys.argv array to deduce which arguments were used in the CLI.
 
     If unknown arguments are found, we deduce that mdformat is being used as a
@@ -87,17 +90,16 @@ def _reload_cli_opts() -> Mapping:
     return {key: value for key, value in vars(args).items() if value is not None}
 
 
-def update_mdit(mdit: markdown_it.MarkdownIt) -> NoReturn:
+def update_mdit(mdit: markdown_it.MarkdownIt) -> None:
     """Read the pyproject.toml file and re-create the mdformat options."""
-    mdformat_options = mdit.options["mdformat"]
+    mdformat_options: _ConfigOptions = mdit.options["mdformat"]
     file_path = mdformat_options.get("filename", "-")
     pyproject_path = _find_pyproject_toml_path(file_path)
     if pyproject_path:
         pyproject_opts = _parse_pyproject(pyproject_path)
         if pyproject_opts is not None:
             cli_opts = _reload_cli_opts()
-            new_options: Mapping = {**pyproject_opts, **cli_opts}
-            mdformat_options.update(new_options)
+            mdformat_options.update(**pyproject_opts, **cli_opts)
 
 
-RENDERERS: Mapping[str, Render] = {}
+RENDERERS: MutableMapping[str, Render] = {}
