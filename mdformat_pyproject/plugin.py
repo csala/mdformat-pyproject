@@ -53,6 +53,7 @@ def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[_ConfigOptions]:
     if options is not None:
         mdformat._conf._validate_keys(options, pyproject_path)
         mdformat._conf._validate_values(options, pyproject_path)
+
     return options
 
 
