@@ -3,7 +3,7 @@
 import functools
 import pathlib
 import sys
-from typing import MutableMapping, Optional, Sequence
+from typing import MutableMapping, Optional, Sequence, Union
 
 import markdown_it
 import mdformat
@@ -15,7 +15,7 @@ else:
     import tomli as tomllib
 
 
-_ConfigOptions = MutableMapping[str, int | str | Sequence[str]]
+_ConfigOptions = MutableMapping[str, Union[int, str, Sequence[str]]]
 
 
 @functools.lru_cache()
