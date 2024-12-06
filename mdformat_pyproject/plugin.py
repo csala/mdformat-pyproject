@@ -100,7 +100,8 @@ def update_mdit(mdit: markdown_it.MarkdownIt) -> None:
         pyproject_opts = _parse_pyproject(pyproject_path)
         if pyproject_opts is not None:
             cli_opts = _reload_cli_opts()
-            mdformat_options.update(**pyproject_opts, **cli_opts)
+            mdformat_options.update(**pyproject_opts)
+            mdformat_options.update(**cli_opts)
 
 
 RENDERERS: MutableMapping[str, Render] = {}
