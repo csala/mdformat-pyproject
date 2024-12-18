@@ -1,6 +1,5 @@
 """Main plugin module."""
 
-import functools
 import pathlib
 import sys
 from typing import MutableMapping, Optional, Sequence, Union
@@ -14,11 +13,18 @@ if sys.version_info >= (3, 11):
 else:
     import tomli as tomllib
 
+if sys.version_info >= (3, 9):
+    from functools import cache
+else:
+    from functools import lru_cache
+
+    cache = lru_cache()
+
 
 _ConfigOptions = MutableMapping[str, Union[int, str, Sequence[str]]]
 
 
-@functools.lru_cache()
+@cache
 def _find_pyproject_toml_path(search_path: str) -> Optional[pathlib.Path]:
     """Find the pyproject.toml file that corresponds to the search path.
 
@@ -41,7 +47,7 @@ def _find_pyproject_toml_path(search_path: str) -> Optional[pathlib.Path]:
     return None
 
 
-@functools.lru_cache()
+@cache
 def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[_ConfigOptions]:
     """Extract and validate the mdformat options from the pyproject.toml file.
 
@@ -57,7 +63,7 @@ def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[_ConfigOptions]:
     return options
 
 
-@functools.lru_cache()
+@cache
 def _reload_cli_opts() -> _ConfigOptions:
     """Re-parse the sys.argv array to deduce which arguments were used in the CLI.
 
