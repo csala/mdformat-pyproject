@@ -2,11 +2,13 @@
 
 import pathlib
 import sys
-from typing import MutableMapping, Optional, Sequence, Union
+from typing import MutableMapping, Optional, Sequence, Union, TYPE_CHECKING
 
 import markdown_it
 import mdformat
-from mdformat.renderer.typing import Render
+
+if TYPE_CHECKING:
+    from mdformat.renderer.typing import Render
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -110,4 +112,4 @@ def update_mdit(mdit: markdown_it.MarkdownIt) -> None:
             mdformat_options.update(**cli_opts)
 
 
-RENDERERS: MutableMapping[str, Render] = {}
+RENDERERS: MutableMapping[str, "Render"] = {}
