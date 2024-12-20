@@ -5,6 +5,11 @@
 
 An [mdformat] plugin to read configuration from `pyproject.toml`.
 
+> ⚠️ WARNING: it has been detected that some native `mdformat` options like `end_of_line` or
+> `exclude` are currently being ignored when included in the `pyproject.toml` file. The issue is
+> being worked on right now. You can read more here in
+> [issue #4](https://github.com/csala/mdformat-pyproject/issues/4)
+
 ## Install
 
 Install with:
