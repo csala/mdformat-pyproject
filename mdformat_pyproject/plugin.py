@@ -2,7 +2,7 @@
 
 import pathlib
 import sys
-from typing import MutableMapping, Optional, Sequence, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, MutableMapping, Optional, Sequence, Union
 
 import markdown_it
 import mdformat
