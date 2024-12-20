@@ -4,7 +4,7 @@ on:
   # This workflow is triggered after every successfull execution
   # of `ci` workflow.
   workflow_run:
-    workflows: ["ci"]
+    workflows: ["CI"]
     types:
       - completed
 
