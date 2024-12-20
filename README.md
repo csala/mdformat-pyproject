@@ -43,8 +43,8 @@ Add the following to your `.pre-commit-config.yaml`:
         - mdformat-pyproject
 ```
 
-[ci-badge]: https://github.com/csala/mdformat-pyproject/actions/workflows/tests.yml/badge.svg
-[ci-link]: https://github.com/csala/mdformat-pyproject/actions/workflows/tests.yml
+[ci-badge]: https://github.com/csala/mdformat-pyproject/actions/workflows/ci.yml/badge.svg
+[ci-link]: https://github.com/csala/mdformat-pyproject/actions/workflows/ci.yml
 [cov-badge]: https://codecov.io/gh/csala/mdformat-pyproject/branch/master/graph/badge.svg
 [cov-link]: https://codecov.io/gh/csala/mdformat-pyproject
 [mdformat]: https://github.com/executablebooks/mdformat

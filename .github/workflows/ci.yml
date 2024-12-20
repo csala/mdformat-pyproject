@@ -49,6 +49,7 @@ jobs:
         pytest --cov=mdformat_pyproject --cov-report=xml --cov-report=term-missing
 
     - name: Store PR number and commit SHA
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
       run: |
         echo "Storing PR number ${{ github.event.number }}"
         echo "${{ github.event.number }}" > pr_number.txt
@@ -62,12 +63,14 @@ jobs:
     # Triggered sub-workflow is not able to detect the original commit/PR which is available
     # in this workflow.
     - name: Store PR number
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
       uses: actions/upload-artifact@v4
       with:
         name: pr_number
         path: pr_number.txt
 
     - name: Store commit SHA
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
       uses: actions/upload-artifact@v4
       with:
         name: commit_sha
@@ -77,6 +80,7 @@ jobs:
     # is executed by a different workflow `coverage-report.yml`. The reason for this
     # split is because `on.pull_request` workflows don't have access to secrets.
     - name: Store coverage report in artifacts
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
       uses: actions/upload-artifact@v4
       with:
         name: codecov_report
@@ -84,7 +88,8 @@ jobs:
 
     - run: |
         echo "The coverage report was stored in Github artifacts."
-        echo "It will be uploaded to Codecov using [coverage-report.yml] workflow shortly."
+        echo "It will be uploaded to Codecov using [codecov.yml] workflow shortly."
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
 
   pre-commit-hook:
     runs-on: ubuntu-latest
