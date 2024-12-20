@@ -2,7 +2,7 @@ name: CodeCov Report Upload
 
 on:
   # This workflow is triggered after every successfull execution
-  # of `tests` workflow.
+  # of `ci` workflow.
   workflow_run:
     workflows: ["ci"]
     types:
@@ -99,7 +99,7 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: ${{ github.workspace }}/codecov_report.xml
+          files: ${{ github.workspace }}/coverage.xml
           fail_ci_if_error: true
           # Manual overrides for these parameters are needed because automatic detection
           # in codecov-action does not work for non-`pull_request` workflows.
