@@ -15,7 +15,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 keywords = ["mdformat", "markdown", "markdown-it"]
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 dependencies = [
     "mdformat ~=0.7",
     "tomli ~=2.0; python_version < '3.11'"

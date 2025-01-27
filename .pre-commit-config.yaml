@@ -28,10 +28,9 @@ repos:
     - flake8-bugbear
     - flake8-builtins
     - flake8-comprehensions
-- repo: local
+- repo: https://github.com/hukkin/mdformat
+  rev: 0.7.21
   hooks:
   - id: mdformat
-    name: mdformat
-    entry: mdformat
-    language: python
-    types: [markdown]
+    additional_dependencies:
+    - mdformat-pyproject
