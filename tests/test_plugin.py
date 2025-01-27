@@ -121,13 +121,13 @@ def test_update_mdit_pyproject():
 _BROKEN_OPTS = {"tool": {"mdformat": {"invalid": "option"}}}
 
 
-@unittest.mock.patch("mdformat_pyproject.plugin.tomllib.loads", lambda _: _BROKEN_OPTS)
+@unittest.mock.patch("mdformat_pyproject.plugin.tomllib.load", lambda _: _BROKEN_OPTS)
 def test_update_mdit_invalid_pyproject():
     """Test update_mdit when there are invlid options inside the pyproject.toml file.
 
     Setup:
-        - Mock tomllib.loads to return an invalid pyproject.toml file.
-        - Also ensure that the loads cache is clear
+        - Mock tomllib.load to return an invalid pyproject.toml file.
+        - Also ensure that the load cache is clear
     Input:
         - mdit with the default opts and a filename located inside the current project.
     Excepted Side Effect:
