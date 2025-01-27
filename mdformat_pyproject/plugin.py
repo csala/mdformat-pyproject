@@ -56,7 +56,9 @@ def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[_ConfigOptions]:
     The options are searched inside a [tool.mdformat] key within the toml file,
     and they are validated using the default functions from `mdformat._conf`.
     """
-    content = tomllib.loads(pyproject_path.read_text())
+    with pyproject_path.open(mode="rb") as pyproject_file:
+        content = tomllib.load(pyproject_file)
+
     options = content.get("tool", {}).get("mdformat")
     if options is not None:
         mdformat._conf._validate_keys(options, pyproject_path)
