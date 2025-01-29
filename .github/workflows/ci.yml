@@ -17,7 +17,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.11
+        python-version: 3.13
     - name: Installation (deps and package)
       run: pip install .
     - uses: pre-commit/action@v2.0.0
@@ -49,7 +49,7 @@ jobs:
         pytest --cov=mdformat_pyproject --cov-report=xml --cov-report=term-missing
 
     - name: Store PR number and commit SHA
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
       run: |
         echo "Storing PR number ${{ github.event.number }}"
         echo "${{ github.event.number }}" > pr_number.txt
@@ -63,14 +63,14 @@ jobs:
     # Triggered sub-workflow is not able to detect the original commit/PR which is available
     # in this workflow.
     - name: Store PR number
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
       uses: actions/upload-artifact@v4
       with:
         name: pr_number
         path: pr_number.txt
 
     - name: Store commit SHA
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
       uses: actions/upload-artifact@v4
       with:
         name: commit_sha
@@ -80,7 +80,7 @@ jobs:
     # is executed by a different workflow `coverage-report.yml`. The reason for this
     # split is because `on.pull_request` workflows don't have access to secrets.
     - name: Store coverage report in artifacts
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
       uses: actions/upload-artifact@v4
       with:
         name: codecov_report
@@ -89,7 +89,7 @@ jobs:
     - run: |
         echo "The coverage report was stored in Github artifacts."
         echo "It will be uploaded to Codecov using [codecov.yml] workflow shortly."
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.11
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
 
   pre-commit-hook:
     runs-on: ubuntu-latest
@@ -99,7 +99,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: 3.11
+        python-version: 3.13
 
     - name: Installation (deps and package)
       run: |
@@ -118,10 +118,10 @@ jobs:
     steps:
     - name: Checkout source
       uses: actions/checkout@v3
-    - name: Set up Python 3.11
+    - name: Set up Python 3.13
       uses: actions/setup-python@v4
       with:
-        python-version: 3.11
+        python-version: 3.13
     - name: install flit
       run: |
         pip install flit~=3.0
