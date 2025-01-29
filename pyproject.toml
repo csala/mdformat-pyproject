@@ -46,6 +46,7 @@ profile = "black"
 [tool.mdformat]
 wrap = 99
 number = true
+exclude = [".tox/**", ".venv/**"]
 
 [tool.coverage.report]
 exclude_lines = [
