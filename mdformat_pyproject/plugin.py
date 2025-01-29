@@ -2,7 +2,7 @@
 
 import pathlib
 import sys
-from typing import TYPE_CHECKING, MutableMapping, Optional, Sequence, Union
+from typing import TYPE_CHECKING, MutableMapping, Optional, Sequence, Tuple, Union
 
 import markdown_it
 import mdformat
@@ -27,19 +27,14 @@ _ConfigOptions = MutableMapping[str, Union[int, str, Sequence[str]]]
 
 
 @cache
-def _find_pyproject_toml_path(search_path: str) -> Optional[pathlib.Path]:
-    """Find the pyproject.toml file that corresponds to the search path.
+def _find_pyproject_toml_path(search_path: pathlib.Path) -> Optional[pathlib.Path]:
+    """Find the pyproject.toml file that applies to the search path.
 
     The search is done ascending through the folders tree until a pyproject.toml
     file is found in the same folder. If the root '/' is reached, None is returned.
-
-    The special path "-" used for stdin inputs is replaced with the current working
-    directory.
     """
-    if search_path == "-":
-        search_path = pathlib.Path.cwd()
-    else:
-        search_path = pathlib.Path(search_path).resolve()
+    if search_path.is_file():
+        search_path = search_path.parent
 
     for parent in (search_path, *search_path.parents):
         candidate = parent / "pyproject.toml"
@@ -68,50 +63,26 @@ def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[_ConfigOptions]:
 
 
 @cache
-def _reload_cli_opts() -> _ConfigOptions:
-    """Re-parse the sys.argv array to deduce which arguments were used in the CLI.
+def read_toml_opts(conf_dir: pathlib.Path) -> Tuple[MutableMapping, Optional[pathlib.Path]]:
+    """Alternative read_toml_opts that reads from pyproject.toml instead of .mdformat.toml.
 
-    If unknown arguments are found, we deduce that mdformat is being used as a
-    python library and therefore no mdformat command line arguments were passed.
-
-    Notice that the strategy above does not fully close the door to situations
-    with colliding arguments with different meanings, but the rarity of the
-    situation and the complexity of a possible solution makes the risk worth taking.
+    Notice that if `.mdformat.toml` exists it is ignored.
     """
-    import mdformat._cli
-
-    if hasattr(mdformat.plugins, "_PARSER_EXTENSION_DISTS"):
-        # New API, mdformat>=0.7.19
-        arg_parser = mdformat._cli.make_arg_parser(
-            mdformat.plugins._PARSER_EXTENSION_DISTS,
-            mdformat.plugins._CODEFORMATTER_DISTS,
-            mdformat.plugins.PARSER_EXTENSIONS,
-        )
+    pyproject_path = _find_pyproject_toml_path(conf_dir)
+    if pyproject_path:
+        pyproject_opts = _parse_pyproject(pyproject_path)
     else:
-        # Backwards compatibility, mdformat<0.7.19
-        arg_parser = mdformat._cli.make_arg_parser(
-            mdformat.plugins.PARSER_EXTENSIONS,
-            mdformat.plugins.CODEFORMATTERS,
-        )
+        pyproject_opts = {}
 
-    args, unknown = arg_parser.parse_known_args(sys.argv[1:])
-    if unknown:
-        return {}
-
-    return {key: value for key, value in vars(args).items() if value is not None}
+    return pyproject_opts, pyproject_path
 
 
 def update_mdit(mdit: markdown_it.MarkdownIt) -> None:
-    """Read the pyproject.toml file and re-create the mdformat options."""
-    mdformat_options: _ConfigOptions = mdit.options["mdformat"]
-    file_path = mdformat_options.get("filename", "-")
-    pyproject_path = _find_pyproject_toml_path(file_path)
-    if pyproject_path:
-        pyproject_opts = _parse_pyproject(pyproject_path)
-        if pyproject_opts is not None:
-            cli_opts = _reload_cli_opts()
-            mdformat_options.update(**pyproject_opts)
-            mdformat_options.update(**cli_opts)
+    """No-op, since this plugin only monkey patches and does not modify mdit."""
+    pass
 
 
 RENDERERS: MutableMapping[str, "Render"] = {}
+
+# Monkey patch mdformat._conf to use our own read_toml_opts version
+mdformat._conf.read_toml_opts = read_toml_opts
