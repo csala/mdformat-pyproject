@@ -1,7 +1,7 @@
 name: CodeCov Report Upload
 
 on:
-  # This workflow is triggered after every successfull execution
+  # This workflow is triggered after every successful execution
   # of `ci` workflow.
   workflow_run:
     workflows: ["CI"]

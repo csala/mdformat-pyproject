@@ -58,7 +58,7 @@ jobs:
         echo "${{ github.event.pull_request.head.sha }}" > commit_sha.txt
 
     # Workaround for codecov tokenless upload errors on external PRs
-    # Copied and ajusted from the workarounds suggested in the link below:
+    # Copied and adjusted from the workarounds suggested in the link below:
     # https://github.com/codecov/feedback/issues/301#issuecomment-2009355183
     # Triggered sub-workflow is not able to detect the original commit/PR which is available
     # in this workflow.
