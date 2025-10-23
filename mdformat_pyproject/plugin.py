@@ -1,14 +1,20 @@
 """Main plugin module."""
 
-import pathlib
+from __future__ import annotations
+
 import sys
-from typing import TYPE_CHECKING, MutableMapping, Optional, Sequence, Tuple, Union
+from pathlib import Path
 
 import markdown_it
 import mdformat
 
+TYPE_CHECKING = False
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     from mdformat.renderer.typing import Render
+
+    _ConfigOptions = dict[str, int | str | Sequence[str]]
 
 if sys.version_info >= (3, 11):
     import tomllib
@@ -23,11 +29,8 @@ else:
     cache = lru_cache()
 
 
-_ConfigOptions = MutableMapping[str, Union[int, str, Sequence[str]]]
-
-
 @cache
-def _find_pyproject_toml_path(search_path: pathlib.Path) -> Optional[pathlib.Path]:
+def _find_pyproject_toml_path(search_path: Path) -> Path | None:
     """Find the pyproject.toml file that applies to the search path.
 
     The search is done ascending through the folders tree until a pyproject.toml
@@ -45,7 +48,7 @@ def _find_pyproject_toml_path(search_path: pathlib.Path) -> Optional[pathlib.Pat
 
 
 @cache
-def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[_ConfigOptions]:
+def _parse_pyproject(pyproject_path: Path) -> _ConfigOptions | None:
     """Extract and validate the mdformat options from the pyproject.toml file.
 
     The options are searched inside a [tool.mdformat] key within the toml file,
@@ -63,7 +66,7 @@ def _parse_pyproject(pyproject_path: pathlib.Path) -> Optional[_ConfigOptions]:
 
 
 @cache
-def read_toml_opts(conf_dir: pathlib.Path) -> Tuple[MutableMapping, Optional[pathlib.Path]]:
+def patched_read_toml_opts(conf_dir: Path) -> tuple[dict, Path | None]:
     """Alternative read_toml_opts that reads from pyproject.toml instead of .mdformat.toml.
 
     Notice that if `.mdformat.toml` exists it is ignored.
@@ -82,7 +85,7 @@ def update_mdit(mdit: markdown_it.MarkdownIt) -> None:
     pass
 
 
-RENDERERS: MutableMapping[str, "Render"] = {}
+RENDERERS: MutableMapping[str, Render] = {}
 
 # Monkey patch mdformat._conf to use our own read_toml_opts version
 mdformat._conf.read_toml_opts = read_toml_opts
