@@ -13,27 +13,27 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
-        python-version: 3.13
+        python-version: "3.14"
     - name: Installation (deps and package)
       run: pip install .
-    - uses: pre-commit/action@v2.0.0
+    - uses: pre-commit/action@v3.0.1
 
   tests:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: [3.9, '3.10', 3.11, 3.12, 3.13]
+        python-version: ['3.10', 3.11, 3.12, 3.13, 3.14]
         os: [ubuntu-latest, windows-latest]
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
 
@@ -49,7 +49,7 @@ jobs:
         pytest --cov=mdformat_pyproject --cov-report=xml --cov-report=term-missing
 
     - name: Store PR number and commit SHA
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.14
       run: |
         echo "Storing PR number ${{ github.event.number }}"
         echo "${{ github.event.number }}" > pr_number.txt
@@ -63,14 +63,14 @@ jobs:
     # Triggered sub-workflow is not able to detect the original commit/PR which is available
     # in this workflow.
     - name: Store PR number
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.14
       uses: actions/upload-artifact@v4
       with:
         name: pr_number
         path: pr_number.txt
 
     - name: Store commit SHA
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.14
       uses: actions/upload-artifact@v4
       with:
         name: commit_sha
@@ -80,7 +80,7 @@ jobs:
     # is executed by a different workflow `coverage-report.yml`. The reason for this
     # split is because `on.pull_request` workflows don't have access to secrets.
     - name: Store coverage report in artifacts
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.14
       uses: actions/upload-artifact@v4
       with:
         name: codecov_report
@@ -89,17 +89,17 @@ jobs:
     - run: |
         echo "The coverage report was stored in Github artifacts."
         echo "It will be uploaded to Codecov using [codecov.yml] workflow shortly."
-      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.13
+      if: matrix.os == 'ubuntu-latest' && matrix.python-version == 3.14
 
   pre-commit-hook:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v5
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v6
       with:
-        python-version: 3.13
+        python-version: 3.14
 
     - name: Installation (deps and package)
       run: |
@@ -117,11 +117,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout source
-      uses: actions/checkout@v3
-    - name: Set up Python 3.13
-      uses: actions/setup-python@v4
+      uses: actions/checkout@v5
+    - name: Set up Python 3.14
+      uses: actions/setup-python@v6
       with:
-        python-version: 3.13
+        python-version: 3.14
     - name: install flit
       run: |
         pip install flit~=3.0
