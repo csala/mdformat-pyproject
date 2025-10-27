@@ -2,6 +2,7 @@
 
 import pathlib
 import sys
+from functools import cache
 from typing import TYPE_CHECKING, MutableMapping, Optional, Sequence, Tuple, Union
 
 import markdown_it
@@ -14,13 +15,6 @@ if sys.version_info >= (3, 11):
     import tomllib
 else:
     import tomli as tomllib
-
-if sys.version_info >= (3, 9):
-    from functools import cache
-else:
-    from functools import lru_cache
-
-    cache = lru_cache()
 
 
 _ConfigOptions = MutableMapping[str, Union[int, str, Sequence[str]]]

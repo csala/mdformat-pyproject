@@ -15,16 +15,16 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 keywords = ["mdformat", "markdown", "markdown-it"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
-    "mdformat ~=0.7",
+    "mdformat ~= 1.0.0",
     "tomli ~=2.0; python_version < '3.11'"
 ]
 dynamic = ["version", "description"]
 
 [project.optional-dependencies]
 test = [
-    "pytest~=6.0",
+    "pytest >= 8.4.0",
     "coverage",
     "pytest-cov",
 ]
