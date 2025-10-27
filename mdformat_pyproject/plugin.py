@@ -60,7 +60,7 @@ def _parse_pyproject(pyproject_path: Path) -> _ConfigOptions | None:
 
 
 @cache
-def patched_read_toml_opts(conf_dir: Path) -> tuple[dict, Path | None]:
+def read_toml_opts(conf_dir: Path) -> tuple[dict, Path | None]:
     """Alternative read_toml_opts that reads from pyproject.toml instead of .mdformat.toml.
 
     Notice that if `.mdformat.toml` exists it is ignored.
@@ -82,4 +82,4 @@ def update_mdit(mdit: markdown_it.MarkdownIt) -> None:
 RENDERERS: MutableMapping[str, Render] = {}
 
 # Monkey patch mdformat._conf to use our own read_toml_opts version
-mdformat._conf.read_toml_opts = patched_read_toml_opts
+mdformat._conf.read_toml_opts = read_toml_opts
