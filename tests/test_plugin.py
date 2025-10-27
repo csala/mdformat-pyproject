@@ -12,6 +12,7 @@ from mdformat_pyproject import plugin
 THIS_MODULE_PATH = pathlib.Path(__file__)
 THIS_MODULE_PARENT = THIS_MODULE_PATH.parent
 PYPROJECT_PATH = THIS_MODULE_PARENT.parent / "pyproject.toml"
+MDFORMAT_TOML_PATH = THIS_MODULE_PARENT.parent / ".mdformat.toml"
 
 
 def setup_function():
@@ -30,74 +31,74 @@ def nonexistent_path():
     return pathlib.Path(fake_parent) / "path" / "to" / "a" / "file.md"
 
 
-def test__find_pyproject_toml_path_directory_inside_project():
-    """Test _find_pyproject_toml_path when search_path points at a directory within the project.
+def test_search_config_directory_inside_project():
+    """Test patched_read_toml_opts when search_path points at a directory within the project.
 
     Input:
         - search_path=THIS_MODULE_PATH -> directory is inside the project
     Expected output:
-        - pyproject.toml of this project.
+        - .mdformat.toml of this project.
     """
-    returned = plugin._find_pyproject_toml_path(THIS_MODULE_PARENT)
-    assert returned == PYPROJECT_PATH
+    options, conf_path = plugin.patched_read_toml_opts(THIS_MODULE_PARENT)
+    assert conf_path == MDFORMAT_TOML_PATH
 
 
-def test__find_pyproject_toml_path_directory_outside_project(nonexistent_path):
-    """Test _find_pyproject_toml_path when search_path points at a directory within the project.
+def test_search_config_directory_outside_project(nonexistent_path):
+    """Test patched_read_toml_opts when search_path points at a directory within the project.
 
     Input:
         - search_path=nonexistent_path.parent -> directory is outside the project
     Expected output:
-        - pyproject.toml of this project.
+        - None
     """
-    returned = plugin._find_pyproject_toml_path(nonexistent_path.parent)
-    assert returned is None
+    options, conf_path = plugin.patched_read_toml_opts(nonexistent_path.parent)
+    assert conf_path is None
 
 
-def test__find_pyproject_toml_path_file_inside_project():
-    """Test _find_pyproject_toml_path when search_path points at a file within the project.
+def test_search_config_file_inside_project():
+    """Test patched_read_toml_opts when search_path points at a file within the project.
 
     Input:
         - search_path="__file__" -> file is inside the project
     Expected output:
-        - pyproject.toml of this project.
+        - .mdformat.toml of this project.
     """
-    returned = plugin._find_pyproject_toml_path(THIS_MODULE_PATH)
-    assert returned == PYPROJECT_PATH
+    options, conf_path = plugin.patched_read_toml_opts(THIS_MODULE_PATH)
+    assert conf_path == MDFORMAT_TOML_PATH
 
 
-def test__find_pyproject_toml_path_file_outside_of_project(nonexistent_path):
-    """Test _find_pyproject_toml_path when search_path points at a file outside of a project.
+def test_search_config_file_outside_of_project(nonexistent_path):
+    """Test patched_read_toml_opts when search_path points at a file outside of a project.
 
     Input:
         - search_path="/fake/folder/path" -> A madeup path to an nonexistent folder.
     Expected output:
         - None
     """
-    returned = plugin._find_pyproject_toml_path(nonexistent_path)
-    assert returned is None
+    options, conf_path = plugin.patched_read_toml_opts(nonexistent_path)
+    assert conf_path is None
 
 
-def test_read_toml_opts_with_pyproject():
-    """Test read_toml_opts when there is a pyproject.toml file.
+def test_patched_read_toml_opts_with_pyproject():
+    """Test patched_read_toml_opts when there is a pyproject.toml and a .mdformat.toml file.
 
     Input:
         - conf_dir pointing to this module's folder
     Expected Output:
         - Tuple containing:
-          - Dict with the mdformat options from pyproject.toml
-          - Path to the pyproject.toml file
+          - Dict with the mdformat options from .mdformat.toml, which takes precedence
+          - Path to the .mdformat.toml file
     """
     # run
-    opts, path = plugin.read_toml_opts(THIS_MODULE_PATH)
+    options, conf_path = plugin.patched_read_toml_opts(THIS_MODULE_PATH)
 
     # assert
-    assert opts == {"wrap": 99, "number": True, "exclude": [".tox/**", ".venv/**"]}
-    assert path == PYPROJECT_PATH
+    assert options == {"wrap": 99, "number": True, "exclude": [".tox/**", ".venv/**"]}
+    assert conf_path == MDFORMAT_TOML_PATH
 
 
-def test_read_toml_opts_without_pyproject(nonexistent_path):
-    """Test read_toml_opts when there is no pyproject.toml file.
+def test_patched_read_toml_opts_without_pyproject(nonexistent_path):
+    """Test read_toml_opts when there is no pyproject.toml or .mdformat.toml file.
 
     Input:
         - conf_dir pointing to a non-existent folder
@@ -107,7 +108,7 @@ def test_read_toml_opts_without_pyproject(nonexistent_path):
           - None
     """
     # run
-    opts, path = plugin.read_toml_opts(nonexistent_path)
+    opts, path = plugin.patched_read_toml_opts(nonexistent_path)
 
     # assert
     assert opts == {}
