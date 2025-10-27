@@ -11,7 +11,7 @@ import mdformat
 
 TYPE_CHECKING = False
 if TYPE_CHECKING:
-    from collections.abc import MutableMapping, Sequence
+    from collections.abc import Sequence
 
     from mdformat.renderer.typing import Render
 
@@ -79,7 +79,7 @@ def update_mdit(mdit: markdown_it.MarkdownIt) -> None:
     pass
 
 
-RENDERERS: MutableMapping[str, Render] = {}
+RENDERERS: dict[str, Render] = {}
 
 # Monkey patch mdformat._conf to use our own read_toml_opts version
 mdformat._conf.read_toml_opts = read_toml_opts
