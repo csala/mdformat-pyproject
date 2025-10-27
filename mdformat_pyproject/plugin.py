@@ -11,7 +11,7 @@ import mdformat
 
 TYPE_CHECKING = False
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import MutableMapping, Sequence
 
     from mdformat.renderer.typing import Render
 

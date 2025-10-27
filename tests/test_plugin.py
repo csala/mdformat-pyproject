@@ -89,7 +89,7 @@ def test_read_toml_opts_with_pyproject():
           - Path to the pyproject.toml file
     """
     # run
-    opts, path = plugin.read_toml_opts(THIS_MODULE_PATH)
+    opts, path = plugin.patched_read_toml_opts(THIS_MODULE_PATH)
 
     # assert
     assert opts == {"wrap": 99, "number": True, "exclude": [".tox/**", ".venv/**"]}
@@ -107,7 +107,7 @@ def test_read_toml_opts_without_pyproject(nonexistent_path):
           - None
     """
     # run
-    opts, path = plugin.read_toml_opts(nonexistent_path)
+    opts, path = plugin.patched_read_toml_opts(nonexistent_path)
 
     # assert
     assert opts == {}
