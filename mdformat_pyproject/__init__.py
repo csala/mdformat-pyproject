@@ -1,4 +1,4 @@
-"""An mdformat plugin for..."""
+"""An mdformat plugin for reading configuration from ``pyproject.toml`` files."""
 
 __version__ = "0.0.2"
 
