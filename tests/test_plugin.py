@@ -13,7 +13,7 @@ THIS_MODULE_PATH = pathlib.Path(__file__)
 THIS_MODULE_PARENT = THIS_MODULE_PATH.parent
 PYPROJECT_PATH = THIS_MODULE_PARENT.parent / "pyproject.toml"
 PYPROJECT_OPTIONS = {"wrap": 99, "number": True, "exclude": [".tox/**", ".venv/**"]}
-MDFORMAT_TOML_PATH = THIS_MODULE_PARENT / ".mdformat.toml"
+MDFORMAT_TOML_PATH = THIS_MODULE_PARENT / "mdformat_toml" / ".mdformat.toml"
 MDFORMAT_TOML_OPTIONS = {"wrap": 80, "number": False}
 
 
@@ -101,14 +101,14 @@ def test_patched_read_toml_opts_with_only_mdformat():
     """Test read_toml_opts when there is only an .mdformat.toml file.
 
     Input:
-        - search_path pointing to the current file, which has an .mdformat.toml alongside it
+        - search_path pointing to the folder that contains the .mdformat.toml
     Expected Output:
         - Tuple containing:
           - mdformat options
           - mdformat path
     """
     # run
-    options, path = plugin.patched_read_toml_opts(THIS_MODULE_PATH)
+    options, path = plugin.patched_read_toml_opts(MDFORMAT_TOML_PATH.parent)
 
     # assert
     assert options == MDFORMAT_TOML_OPTIONS
