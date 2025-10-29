@@ -114,4 +114,4 @@ def update_mdit(mdit: markdown_it.MarkdownIt) -> None:
 RENDERERS: dict[str, Render] = {}
 
 # Monkey patch mdformat._conf to use our own read_toml_opts version
-mdformat._conf.read_toml_opts = patched_read_toml_opts
+mdformat._cli.read_toml_opts = patched_read_toml_opts

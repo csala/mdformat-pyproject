@@ -1,3 +1,0 @@
-wrap = 99
-number = true
-exclude = [".tox/**", ".venv/**"]
